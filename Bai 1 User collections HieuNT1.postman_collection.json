@@ -1,0 +1,156 @@
+{
+	"info": {
+		"_postman_id": "d9488c17-0464-4d94-ba6c-c75d1fe5e7b7",
+		"name": "User collections HieuNT1",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "37341939"
+	},
+	"item": [
+		{
+			"name": "Get list users",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Save first_name and last_name to environment\", function () {\r",
+							"  \r",
+							"    try {\r",
+							"        var jsonData = pm.response.json();\r",
+							"        \r",
+							"       \r",
+							"        if (jsonData && jsonData.data) {\r",
+							"           \r",
+							"            if (jsonData.data.length >= 2) {\r",
+							"                \r",
+							"                var firstName = jsonData.data[0] ? jsonData.data[0].first_name : undefined;\r",
+							"                \r",
+							"                var lastName = jsonData.data[1] ? jsonData.data[1].last_name : undefined;\r",
+							"                \r",
+							"               \r",
+							"                pm.environment.set(\"first_name\", firstName);\r",
+							"                pm.environment.set(\"last_name\", lastName);\r",
+							"                \r",
+							"               \r",
+							"                pm.expect(firstName).to.not.be.undefined;\r",
+							"                pm.expect(lastName).to.not.be.undefined;\r",
+							"            } else {\r",
+							"                pm.expect.fail(\"Not enough users in response data\");\r",
+							"            }\r",
+							"        } else {\r",
+							"            pm.expect.fail(\"Invalid response structure\");\r",
+							"        }\r",
+							"    } catch (e) {\r",
+							"        \r",
+							"        pm.expect.fail(\"Failed to parse response JSON: \" + e.message);\r",
+							"    }\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://reqres.in/api/users?page=1",
+					"protocol": "https",
+					"host": [
+						"reqres",
+						"in"
+					],
+					"path": [
+						"api",
+						"users"
+					],
+					"query": [
+						{
+							"key": "page",
+							"value": "1"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Creat user",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Verify created user details\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    var firstName = pm.environment.get(\"first_name\");\r",
+							"    var lastName = pm.environment.get(\"last_name\");\r",
+							"    \r",
+							"  \r",
+							"    pm.expect(jsonData.name).to.eql(firstName);\r",
+							"    pm.expect(jsonData.job).to.eql(lastName);\r",
+							"});\r",
+							"pm.test(\"Save created user ID to environment\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    \r",
+							"    \r",
+							"    if (jsonData && jsonData.id) {\r",
+							"  \r",
+							"        pm.environment.set(\"user_id\", jsonData.id);\r",
+							"        \r",
+							"        \r",
+							"        pm.expect(jsonData.id).to.not.be.undefined;\r",
+							"    } else {\r",
+							"        pm.expect.fail(\"User ID not found in response\");\r",
+							"    }\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"name\": \"{{first_name}}\",\r\n  \"job\": \"{{last_name}}\"\r\n}\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://reqres.in/api/users",
+					"protocol": "https",
+					"host": [
+						"reqres",
+						"in"
+					],
+					"path": [
+						"api",
+						"users"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
